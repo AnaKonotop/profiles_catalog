@@ -18,7 +18,8 @@ ul {
 
 .container {
   width: 100%;
-  max-width: 1200px;
+  padding: 0 15px;
+  max-width: 1170px;
   margin: 0 auto;
 }
 
@@ -73,4 +74,45 @@ ul {
 .sign-in-page__btn-submit:active {
   background-color: red;
   transition: .1s;
+}
+
+.profiles-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.profiles-list__item {
+  position: relative;
+  width: 300px;
+  height: 400px;
+  background-color: #e0d4d4;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.profiles-list__info-block {
+  display: flex;
+  flex-direction: column;
+  padding: 0 15px 15px;
+}
+
+.profiles-list__date-created {
+  position: absolute;
+  display: block;
+  background-color: whitesmoke;
+  right: 0;
+  border-radius: 0 10px 0 10px;
+  padding: 4px;
+}
+
+.profiles-list__item-avatar {
+  width: 100%;
+  object-fit: cover;
+  height: 100%;
+}
+
+.profiles-list__avatar-wrapper {
+  height: 256px;
 }

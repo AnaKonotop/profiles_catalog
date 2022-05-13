@@ -9,25 +9,9 @@ const reg_file = document.getElementById('reg_file');
 reg_form.addEventListener('submit', e => {
   e.preventDefault();
 
-  // console.log(reg_name.value);
-  // console.log(reg_surname.value);
-  // console.log(reg_middlename.value);
-  // console.log(job_title.value);
-  // console.log(job_specialization.value);
-
   const [img] = reg_file.files;
 
-  // const data = {
-  //   action: "profile_add",
-  //   name: reg_name.value,
-  //   surname: reg_surname.value,
-  //   middlename: reg_middlename.value,
-  //   job_title: job_title.value,
-  //   job_specialization: job_specialization.value,
-  // }
-
   const formData = new FormData();
-
   formData.append('action', 'profile_add');
   formData.append('name', reg_name.value);
   formData.append('surname', reg_surname.value);
@@ -38,20 +22,18 @@ reg_form.addEventListener('submit', e => {
 
   fetch('./api.php', {
     method: 'POST',
-    // headers: { 'Content-Type': "multipart/form-data" },
-    // body: JSON.stringify(data),
     body: formData,
   });
 });
 
 const getSelectData = async (action = 'job_titles_list') => {
 
-  const data = { action }
+  const Data = new FormData();
+  Data.set('action', action);
 
   const data_2 = await fetch('./api.php', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
+    body: Data,
   });
   return data_2;
 }
@@ -59,19 +41,22 @@ const getSelectData = async (action = 'job_titles_list') => {
 getSelectData('job_titles_list')
   .then(res => res.json())
   .then((data) => {
-    // console.log('YES!', data);
+    console.log('YES!', data);
     data.forEach(item => {
       const option = document.createElement('option');
       option.textContent = item.name;
       option.value = item.id;
       job_title.append(option);
     })
-  });
+  })
+  .catch(console.log);
 
 getSelectData('specializations_list')
   .then(res => res.json())
   .then((data) => {
-    // console.log('YES!', data);
+    
+    console.log('YES!', data);
+
     data.forEach(item => {
       const option = document.createElement('option');
       option.textContent = item.name;

@@ -2,7 +2,8 @@
 header('Content-type: application/json');
 require_once('config.php');
 
-$data = json_decode( file_get_contents('php://input'), true );
+// $data = json_decode( file_get_contents('php://input'), true );
+$data= $_POST;
 
 /* TEST action profile_add, list_users & profiles_list */
 /* 
@@ -22,8 +23,8 @@ $data['middlename'] = 'Mikhailovich';
 $data['surname'] = 'Petrenko';
 $data['img'] = 'img-profiles/temp.png';
 $data['job_title'] = 1;
-$data['specialization'] = 1; */
-
+$data['specialization'] = 1;
+ */
 
 if ($data['action'])
 {
@@ -51,12 +52,9 @@ if ($data['action'])
             $name = $data['name'];
             $middlename = $data['middlename'];
             $surname = $data['surname'];
-            $img = $data['img'];
-            // $job_title_id = $data['job_title'];
-            // $specialization_id = $data['specialization'];
-            $job_title_id = 1;
-            $specialization_id = 1;
-            var_dump($data['img']);
+            $img = $_FILES['img'];
+            $job_title_id = $data['job_title'];
+            $specialization_id = $data['job_specialization'];
             profile_add($name, $middlename, $surname, $img, $job_title_id, $specialization_id);
             break;
         case 'profiles_list':
@@ -174,12 +172,15 @@ function remove_user($login){
 /* Profiles */
 function profile_add($name, $middlename, $surname, $img, $job_title_id, $specialization_id){
     global $db;
+    $file = './img-profiles/'.$img['name'];
+    if (file_exists($file)) $file = 'img-profiles/'.date("Y-m-d").'-'.$img['name'];
+    file_put_contents($file, file_get_contents($img['tmp_name']));
     $query = "INSERT INTO `profiles` (name, middlename, surname, img, job_title_id, specialization_id, date_added) 
               VALUES (?, ?, ?, ?, ?, ?, NOW())";
     $insert = $db->prepare($query);
-    print_r($img);
+    // print_r($img);
     $insert->execute(array(
-        $name, $middlename, $surname, $img, $job_title_id, $specialization_id
+        $name, $middlename, $surname, $file, $job_title_id, $specialization_id
     ));
     echo 'profile added';
 
