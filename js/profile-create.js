@@ -11,23 +11,19 @@ reg_form.addEventListener('submit', e => {
 
   const [img] = reg_file.files;
 
-  const formData = new FormData();
-  formData.append('action', 'profile_add');
-  formData.append('name', reg_name.value);
-  formData.append('surname', reg_surname.value);
-  formData.append('middlename', reg_middlename.value);
-  formData.append('job_title', job_title.value);
-  formData.append('job_specialization', job_specialization.value);
-  formData.append('img', img);
+  const ProfileData = new FormData();
+  ProfileData.append('action', 'profile_add');
+  ProfileData.append('name', reg_name.value);
+  ProfileData.append('surname', reg_surname.value);
+  ProfileData.append('middlename', reg_middlename.value);
+  ProfileData.append('job_title', job_title.value);
+  ProfileData.append('job_specialization', job_specialization.value);
+  ProfileData.append('img', img);
 
-  fetch('./api.php', {
-    method: 'POST',
-    body: formData,
-  });
+  fetch('./api.php', { method: 'POST',  body: ProfileData });
 });
 
 const getSelectData = async (action = 'job_titles_list') => {
-
   const Data = new FormData();
   Data.set('action', action);
 
