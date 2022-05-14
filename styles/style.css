@@ -27,12 +27,9 @@ ul {
   padding: 20px 0;
 }
 
-.header__log-out-btn {
+.btn {
   background: #32be32;
-  display: block;
-  width: 100px;
   height: 30px;
-  margin-left: auto;
   cursor: pointer;
   border: none;
   border-radius: 5px;
@@ -42,6 +39,12 @@ ul {
   text-transform: uppercase;
   font-family: 'Heebo', sans-serif;
   letter-spacing: 1px;
+}
+
+.header__log-out-btn {
+  display: block;
+  width: 100px;
+  margin-left: auto;
 }
 
 .nav__list {
@@ -75,6 +78,10 @@ ul {
   margin-bottom: 20px;
 }
 
+.sign-in-page__form-error {
+  color: #c60202;
+}
+
 .sign-in-page__btn-submit {
   border: none;
   font-size: 18px;
@@ -97,19 +104,33 @@ ul {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  /* height: calc(100vh - 70px); */
 }
+
+.profiles-list .container {
+  display: flex;
+  flex-direction: column;
+}
+
+/* .profiles-list__block {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+} */
 
 .profiles-list__item {
   display: flex;
   flex-direction: column;
   position: relative;
-  width: 300px;
+  width: 300px !important;
   height: 400px;
   background-color: #e0d4d4;
   border-radius: 10px;
   overflow: hidden;
   margin-bottom: 20px;
   box-shadow: 0 0 8px 0 #7d897f;
+  margin-top: 5px;
 }
 
 .profiles-list__name {
@@ -147,4 +168,20 @@ ul {
 
 .profiles-list__avatar-wrapper {
   height: 280px;
+}
+
+.profiles-list__dots-wrapper {
+  padding: 20px 0;
+}
+
+.slick-dotted.slick-slider {
+  margin-bottom: 0;
+}
+
+.slick-dots li button:before {
+  color: black;
+}
+
+.slick-dots li.slick-active button:before {
+  color: black;
 }

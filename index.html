@@ -4,26 +4,43 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="./styles/style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@200;400;700&display=swap" rel="stylesheet">
-  <title>Login</title>
+  <link rel="stylesheet" type="text/css" href="./slick/slick.css"/>
+  <link rel="stylesheet" type="text/css" href="./slick/slick-theme.css"/>
+  <link rel="stylesheet" href="./styles/style.css">
+  <title>Profiles list</title>
 </head>
 <body>
   <header class="header">
     <div class="container">
-      <button id="log_out" class="header__log-out-btn">Log out</button>
+      <button id="log_out" class="header__log-out-btn btn">Log out</button>
     </div>
   </header>
-  <div class="container">
-    <h1>Main page </h1>
-  
-    <div id="profiles-list_block">
-      <img src="./img/spinner.gif" alt="spinner"/>
+
+  <div>
+    <div class="container">
+      <h1>Profiles list</h1>
+
+      <select id="profiles-filter">
+        <option value="1">filter 1</option>
+        <option value="2">filter 2</option>
+        <option value="3">filter 3</option>
+      </select>
+
+      <div class="profiles-list__block" id="profiles-list__block">
+        <img src="./img/spinner.gif" alt="spinner"/>
+      </div>
+      <div class="profiles-list__dots-wrapper">
+        <div class="profiles-list__dots"></div>
+      </div>
     </div>
   </div>
 
-  <script src="./js/login.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script type="text/javascript" src="./slick/slick.min.js"></script>
+  <script type="text/javascript" src="./slick/slick.js"></script>
+  <script src="./js/index.js"></script>
 </body>
 </html>

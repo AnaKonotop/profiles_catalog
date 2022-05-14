@@ -1,64 +1,54 @@
-const logOut = document.getElementById('log_out');
-const profilesListBlock = document.getElementById('profiles-list_block');
-const isLoggedIn = localStorage.getItem('profiles_list');
-
-const getProfilesList = async (action = 'profiles_list') => {
-  const Data = new FormData();
-  Data.append('action', action);
-
-  fetch('./api.php', { method: 'POST', body: Data })
-    .then(res => res.json())
-    .then(data => {
-      profilesListBlock.textContent = '';
-      const profilesListWrap = document.createElement('ul');
-      profilesListWrap.classList.add('profiles-list');
-
-      data.map(profileItem => {
-        const item = document.createElement('li');
-        const dateCreated = document.createElement('span');
-        const awaWrap = document.createElement('div');
-        const name = document.createElement('h3');
-        const img = document.createElement('img');
-        const specialization = document.createElement('span');
-        const job = document.createElement('span');
-        const profileInfoBlock = document.createElement('div');
-
-        name.textContent = profileItem.name;
-        name.classList.add('profiles-list__name');
-        dateCreated.textContent = profileItem.date_added;
-        dateCreated.classList.add('profiles-list__date-created');
-        item.classList.add('profiles-list__item');
-        awaWrap.classList.add('profiles-list__avatar-wrapper');
-        specialization.textContent = profileItem.specialization_name;
-        job.textContent = profileItem.job_title_name;
-        profileInfoBlock.classList.add('profiles-list__info-block');
-
-        img.src = profileItem.img;
-        img.alt = profileItem.img;
-        img.classList.add('profiles-list__item-avatar');
-        img.onerror = () => img.src = './img/empty-avatar.png';
-
-        profilesListWrap.append(item);
-        awaWrap.append(img);
-        item.append(dateCreated);
-        item.append(awaWrap);
-        item.append(profileInfoBlock);
-        profileInfoBlock.append(name);
-        profileInfoBlock.append(job);
-        profileInfoBlock.append(specialization);
-      });
-      profilesListBlock.append(profilesListWrap);
-  });
-};
+const form = document.getElementById('form');
+const login = document.getElementById('login');
+const password = document.getElementById('password');
+const submitBtn = document.getElementById('submit-btn');
 
 
-getProfilesList();
+const errorLoginMsg = (message) => {
+  let errorMsg = document.getElementById('form__error');
 
-if(!isLoggedIn) {
-  window.location.href = '/login-page.html';
+  if(!errorMsg) {
+    errorMsg = document.createElement('h3');
+    errorMsg.id = 'form__error';
+  }
+  
+  errorMsg.classList.add('sign-in-page__form-error');
+  errorMsg.textContent = message;
+  form.append(errorMsg);
 }
 
-logOut.addEventListener('click', () => {
-  localStorage.removeItem('profiles_list');
-  location.reload();
-})
+const signInUser = (user, password, action = 'validate_user') => {
+  const Data = new FormData();
+  Data.append('user', user);
+  Data.append('password', password);
+  Data.append('action', action);
+
+  fetch('api.php', {
+      method: 'POST',
+      body: Data,
+    })    
+    .then(res => res.json())
+    .then((res) => {
+      // console.log('resData:', res);
+      if(res.status === 'error') {
+        // console.log('error');
+        errorLoginMsg('Wrong login data');
+      } else {
+        window.location.href = '/';
+        localStorage.setItem('profiles_list', login.value);
+      }
+    })
+    .catch((e) => {
+      errorLoginMsg(e.message);
+    });
+};
+
+form.addEventListener('submit', e => {
+  e.preventDefault();
+
+  if(login.value && password.value) {
+    signInUser(login.value, password.value);
+  } else {
+    errorLoginMsg('All fields are required');
+  }
+});

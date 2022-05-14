@@ -37,7 +37,6 @@ const getSelectData = async (action = 'job_titles_list') => {
 getSelectData('job_titles_list')
   .then(res => res.json())
   .then((data) => {
-    console.log('YES!', data);
     data.forEach(item => {
       const option = document.createElement('option');
       option.textContent = item.name;
@@ -50,9 +49,6 @@ getSelectData('job_titles_list')
 getSelectData('specializations_list')
   .then(res => res.json())
   .then((data) => {
-    
-    console.log('YES!', data);
-
     data.forEach(item => {
       const option = document.createElement('option');
       option.textContent = item.name;

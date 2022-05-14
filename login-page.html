@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@200;400;700&display=swap" rel="stylesheet">
-  <title>Login</title>
+  <title>Sign In</title>
 </head>
 <body>
 
@@ -16,9 +16,15 @@
     <div class="container">
       <nav class="nav">
         <ul class="nav__list">
+
           <li class="nav__list-item">
             <a href="./profile-create.html">Add profile</a>
           </li>
+
+          <li class="nav__list-item">
+            <a href="./about.html">About</a>
+          </li>
+
         </ul>
       </nav>
     </div>
@@ -29,10 +35,11 @@
     <form class="sign-in-page__form" id="form">
       <input id="login" class="sign-in-page__input" type="text" placeholder="Enter login"/>
       <input id="password" class="sign-in-page__input" type="password" placeholder="Enter pass" />
-      <button class="sign-in-page__btn-submit">Sign In</button>
+      
+      <button id="submit-btn" class="sign-in-page__btn-submit">Sign In</button>
     </form>
   </div>
 
-  <script src="./js/index.js"></script>
+  <script src="./js/login.js"></script>
 </body>
 </html>
