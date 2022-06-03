@@ -2,31 +2,8 @@
 header('Content-type: application/json');
 require_once('config.php');
 
-// $data = json_decode( file_get_contents('php://input'), true );
-$data= $_POST;
 
-/* TEST action profile_add, list_users & profiles_list */
-/* 
-$data['action'] = 'profile_add';
-$data['action'] = 'specializations_add';
-$data['action'] = 'list_users';
-$data['action'] = 'profiles_list';
-// $data['action'] = 'job_titles_list';
-// $data['action'] = 'specializations_list';
-// $data['action'] = 'profiles_by_job_title';
-// $data['action'] = 'profiles_by_specialization';
-// $data['action'] = 'profile_get';
-// $data['action'] = 'profile_edit';
-$data['name'] = 'Stepan1';
-$data['id'] = 1;
-$data['middlename'] = 'Mikhailovich';
-$data['surname'] = 'Petrenko';
-$data['img'] = 'img-profiles/temp.png';
-$data['job_title'] = 1;
-$data['specialization'] = 1;
- */
-
-if ($data['action'])
+if (isset($data['action']))
 {
     switch ($data['action']) {
         /* Auth uUsers */
@@ -119,6 +96,32 @@ if ($data['action'])
             $id = $data['id'];
             profiles_by_specialization($id);
             break;
+        /* Navigation */
+        case 'nav_list':
+            if (isset($data['isAdmin'])) $isAdmin = $data['isAdmin'];
+            else $isAdmin = 0;
+            nav_list($isAdmin);
+            break;
+        case 'nav_add':
+            $title = $data['title'];
+            $url = $data['url'];
+            $order = $data['order'];
+            $isAdmin = $data['isAdmin'];
+            nav_add($title, $url, $order, $isAdmin);
+            break;
+        case 'nav_delete':
+            $id = $data['id'];
+            nav_delete($id);
+            break;
+        case 'nav_edit':
+            $id = $data['id'];
+            $title = $data['title'];
+            $url = $data['url'];
+            if (isset($data['order'])) $order = $data['isAdmin'];
+            else $order = 999;
+            if (isset($data['isAdmin'])) $isAdmin = $data['isAdmin'];
+            else $isAdmin = 0;
+            break;
         default:
             echo 'Nothing to see here';
     }
@@ -146,9 +149,9 @@ function validate_user($login, $password){
 
     if ($user && ( md5($password) == $user['hash'] ) )
     {
-        $response['status'] = 'success';
+        $response = md5(md5($password));
     } else {
-        $response['status'] = 'error';
+        $response = false;
     }
     echo json_encode($response);
 }
@@ -172,33 +175,51 @@ function remove_user($login){
 /* Profiles */
 function profile_add($name, $middlename, $surname, $img, $job_title_id, $specialization_id){
     global $db;
-    $file = './img-profiles/'.$img['name'];
-    if (file_exists($file)) $file = 'img-profiles/'.date("Y-m-d").'-'.$img['name'];
-    file_put_contents($file, file_get_contents($img['tmp_name']));
-    $query = "INSERT INTO `profiles` (name, middlename, surname, img, job_title_id, specialization_id, date_added) 
-              VALUES (?, ?, ?, ?, ?, ?, NOW())";
+    $query = "INSERT INTO `profiles` (name, middlename, surname, job_title_id, specialization_id, date_added) 
+              VALUES (?, ?, ?, ?, ?, NOW())";
     $insert = $db->prepare($query);
-    // print_r($img);
     $insert->execute(array(
-        $name, $middlename, $surname, $file, $job_title_id, $specialization_id
+        $name, $middlename, $surname, $job_title_id, $specialization_id
     ));
-    echo 'profile added';
+    $id = $db->lastInsertId();
+    $filename = explode('.', $img['name']);
+    $filename = $id . '-' . $surname . '-' . $name . '-' . $middlename . '.' . $filename[1];
+    $file = IMGPATH . $filename;
+    if ( file_put_contents($file, file_get_contents($img['tmp_name'])) )
+    {
+        $query = "UPDATE `profiles` SET img=:img WHERE id=:id";
+        $stmt = $db->prepare($query);
+        $stmt->execute(['img' => $filename,  'id' => $id]);
+    }
+    echo 'profile added, id #' . $id;
 
 }
 function profiles_list(){
     global $db;
     $stmt = $db->prepare(
         "SELECT profiles.id, profiles.name, middlename, surname, img, date_added, 
-        index_job_titles.name as job_title_name, 
-        index_specializations.name as specialization_name 
+        index_job_titles.name as job_title_name, profiles.job_title_id, 
+        index_specializations.name as specialization_name, profiles.specialization_id 
         FROM `profiles` 
         LEFT JOIN `index_job_titles` ON profiles.job_title_id = index_job_titles.id 
         LEFT JOIN `index_specializations` ON profiles.specialization_id = index_specializations.id"
     );
     $stmt->execute();
     $list = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    if ($list !=true ) echo 'No profiles ;-/';
-    else echo json_encode($list);
+    if ( $list != true ) echo 'No profiles ;-/';
+    else 
+    {
+        echo json_encode(profiles_prepare($list));
+    }
+}
+function profiles_prepare($array){
+    if ( !isset($array[0]['img']) ) $output[] = $array;
+    else $output = $array;
+    foreach ($output as &$v)
+    {
+        $v['img'] = IMGPATH . $v['img'];
+    }
+    return $output;
 }
 function profile_get($id){
     global $db;
@@ -214,7 +235,7 @@ function profile_get($id){
     $stmt->execute([$id]);
     $list = $stmt->fetch(PDO::FETCH_ASSOC);
     if ($list !=true ) echo 'No profiles ;-/';
-    else echo json_encode($list);
+    else echo json_encode(profiles_prepare($list));
 }
 function profile_edit($id, $name, $middlename, $surname, $img, $job_title_id, $specialization_id){
     global $db;
@@ -285,8 +306,7 @@ function specializations_edit($id){
 }
 function specializations_delete($id){
     global $db;
-    $query = "DELETE FROM `index_specializations` WHERE  id=:id";
-    $stmt = $db->prepare($query);
+    $stmt = $db->prepare( "DELETE FROM `index_specializations` WHERE  id=:id");
     $stmt->bindParam(':id', $id);
     $stmt->execute();
     if( ! $stmt->rowCount() ) echo "Error: Deletion failed";
@@ -330,3 +350,34 @@ function profiles_by_specialization($id){
 /* Profiles sort */
 function sort_by_job_titles(){}
 function sort_by_specializations(){}
+/* Navigation */
+function nav_list($isAdmin=0){
+    global $db;
+    $stmt = $db->prepare('SELECT * FROM `menu` WHERE isAdmin=? ORDER BY list_order');
+    $stmt->execute([$isAdmin]);
+    $list = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    if ($list !=true ) echo 'No profiles ;-/';
+    else echo json_encode($list);
+}
+function nav_add($title, $url, $order, $isAdmin=0){
+    global $db;
+    $query = "INSERT INTO `menu` (title, url, isAdmin, list_order) VALUES (?, ?, ?, ?)";
+    $insert = $db->prepare($query);
+    $insert->execute([$title, $url, $isAdmin, $order]);
+    echo "menu '$title' added";
+}
+function nav_delete($id){
+    global $db;
+    $stmt = $db->prepare( "DELETE FROM `menu` WHERE  id=:id");
+    $stmt->bindParam(':id', $id);
+    $stmt->execute();
+    if( ! $stmt->rowCount() ) echo "Error: Deletion failed";
+    else echo 'menu item removed';
+}
+function nav_edit($id, $title, $url, $order, $isAdmin=0){
+    global $db;
+    $stmt = $db->prepare("UPDATE `menu` SET title=?, url=?, isAdmin=?, list_order=? WHERE id=?"); 
+    $stmt->execute([$title, $url, $isAdmin, $order, $id]);
+    if ($stmt->rowCount()) echo "Updated profile id #$id";
+    else echo "No profile updated";
+}

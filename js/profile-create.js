@@ -5,6 +5,42 @@ const reg_middlename = document.getElementById('reg_middlename');
 const job_title = document.getElementById('reg_job_title');
 const job_specialization = document.getElementById('reg_specialization');
 const reg_file = document.getElementById('reg_file');
+const formSelect = document.getElementsByClassName('form-select');
+const reg_file_btn = document.getElementById('reg_file_btn');
+const avaWrapper = document.getElementById('reg_avatar_wrapper');
+const ava = document.getElementById('reg_avatar');
+
+Array.from(formSelect).forEach(selectItem => {
+  selectItem.addEventListener('change', () => {
+    if (selectItem.value) {
+      selectItem.style.border = '2px solid green';
+    }
+  })
+});
+
+reg_file_btn.addEventListener('click', () => {
+  reg_file.click();
+});
+
+reg_file.addEventListener('change', () => {
+  if (!!reg_file.files.length) {
+
+    const fr = new FileReader();
+    const file = reg_file.files[0];
+    fr.readAsArrayBuffer(file);
+
+    fr.onloadstart = () => {
+      console.log('LOADING!');
+      ava.src = './img/spinner.gif';
+    }
+
+    fr.onloadend = function() {
+      const blob = new Blob([fr.result]);
+      const url = URL.createObjectURL(blob);
+      ava.src = url;
+    }
+  }
+})
 
 reg_form.addEventListener('submit', e => {
   e.preventDefault();

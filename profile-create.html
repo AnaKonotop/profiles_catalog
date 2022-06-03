@@ -16,20 +16,33 @@
       <input id="reg_surname" class="sign-in-page__input" type="text" placeholder="surname" name="name" />
       <input id="reg_middlename" class="sign-in-page__input" type="text" placeholder="middlename" name="middlename" />
 
-      <label>
+      <label class="sign-in-page__select-label">
         Select job:
-        <select id="reg_job_title"></select>
+        <select class="form-select" id="reg_job_title">
+          <option hidden value="">Select your job</option>
+        </select>
       </label>
 
-      <label>
+      <label class="sign-in-page__select-label">
         Specialization:
-        
-        <select id="reg_specialization">
-          <img src="./img/spinner.gif" width="20px" alt="spinner"/>
+        <select class="form-select" id="reg_specialization">
+          <option title="Select your specialization" hidden value="">
+            Select your specialization
+          </option>
         </select>
       </label>
       
-      <input id="reg_file" class="sign-in-page__input" type="file" name="photo" />
+      <div class="sign-in-page__avatar-form-block">
+        <button id="reg_file_btn" class="btn" type="button">
+          Select profile img
+        </button>
+  
+        <div class="sign-in-page__avatar-wrapper" id="reg_avatar_wrapper">
+          <img id="reg_avatar" src="./img/empty-avatar.png" alt="avatar" class="sign-in-page__avatar"/>
+        </div>
+      </div>
+      
+      <input id="reg_file" class="sign-in-page__input-file" type="file" name="photo" />
       <button class="sign-in-page__btn-submit">
         Sign Up
       </button>

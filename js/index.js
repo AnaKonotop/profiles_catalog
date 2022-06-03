@@ -1,16 +1,33 @@
 const logOut = document.getElementById('log_out');
 const profilesListBlock = document.getElementById('profiles-list__block');
 const profilesFilter = document.getElementById('profiles-filter');
-
 const isLoggedIn = localStorage.getItem('profiles_list');
 
+
+const Data = new FormData();
+Data.append('action', 'nav_list');
+
+fetch('./api.php', { method: 'POST', body:  Data })
+  .then(res => res.json())
+  .then(data => {
+    console.log(data);
+});
+
 profilesFilter.addEventListener('change', (e) => {
-  console.log('sfsdf', e.target.value);
+  const id = e.target.value;
+
+  if(id === '0') {
+    getProfilesList('profiles_list');
+  } else {
+    getProfilesList('profiles_by_specialization', id);
+  }
 })
 
-const getProfilesList = async (action = 'profiles_list') => {
+const getProfilesList = async (action, id) => {
+
   const Data = new FormData();
   Data.append('action', action);
+  id && Data.append('id', id);
 
   fetch('./api.php', { method: 'POST', body: Data })
     .then(res => res.json())
@@ -20,7 +37,7 @@ const getProfilesList = async (action = 'profiles_list') => {
       profilesListWrap.classList.add('profiles-list');
       profilesListWrap.id = 'profiles_list';
 
-      [...data,...data,...data,...data,...data].map(profileItem => {
+      data.map(profileItem => {
         const item = document.createElement('li');
         const dateCreated = document.createElement('span');
         const avatarWrap = document.createElement('div');
@@ -56,24 +73,22 @@ const getProfilesList = async (action = 'profiles_list') => {
       });
       profilesListBlock.append(profilesListWrap);
 
-      // if(data.length > 4) {
+      if(data.length > 4) {
         startSlick();
-      // }
+      }
     })
 };
 
 
-getProfilesList();
+getProfilesList('profiles_list');
 
 if(!isLoggedIn) {
   window.location.href = '/login-page.html';
 }
 
 logOut.addEventListener('click', () => {
-  debugger;
   localStorage.removeItem('profiles_list');
   window.location.reload();
-  
 })
 
 const startSlick = () => {

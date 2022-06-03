@@ -29,9 +29,7 @@ const signInUser = (user, password, action = 'validate_user') => {
     })    
     .then(res => res.json())
     .then((res) => {
-      // console.log('resData:', res);
       if(res.status === 'error') {
-        // console.log('error');
         errorLoginMsg('Wrong login data');
       } else {
         window.location.href = '/';

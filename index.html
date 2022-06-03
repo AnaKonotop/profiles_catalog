@@ -15,7 +15,16 @@
 <body>
   <header class="header">
     <div class="container">
-      <button id="log_out" class="header__log-out-btn btn">Log out</button>
+      <nav>
+        <menu class="header__menu">
+          <li>
+            <button id="log_out" class="header__log-out-btn btn">Log out</button>
+          </li>
+          <li>
+            <a class="btn" href="/profile-create.html">Create Profile</a>
+          </li>
+        </menu>
+      </nav>
     </div>
   </header>
 
@@ -24,6 +33,7 @@
       <h1>Profiles list</h1>
 
       <select id="profiles-filter">
+        <option value="0">All Data</option>
         <option value="1">filter 1</option>
         <option value="2">filter 2</option>
         <option value="3">filter 3</option>
